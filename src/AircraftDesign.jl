@@ -8,6 +8,6 @@ for file in files
 	include(joinpath(src_dir, file))
 end
 
-export run_naca4
+export run_naca4, SutherlandsLaw, atmosphere_properties, DrelaAtmosphere, StandardAtmosphere
 
 end # module

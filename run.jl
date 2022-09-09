@@ -5,5 +5,5 @@ Pkg.activate(this_dir)
 Pkg.instantiate()
 using AircraftDesign
 
-# launch features (more to come)
+# launch
 run_naca4()
