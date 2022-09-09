@@ -1,3 +1,8 @@
+name = "AircraftDesign"
+uuid = "5b7c0bff-d2a0-432d-bde9-0dfa7d33d1f1"
+authors = ["Andrew Ning <aning@byu.edu>", "Ryan Anderson <rymanderson@gmail.com>"]
+version = "0.1.0"
+
 [deps]
 CCBlade = "e1828068-15df-11e9-03e4-ef195ea46fa4"
 FLOWMath = "6cb5d3fb-0fe8-4cc2-bd89-9fe0b19a99d3"

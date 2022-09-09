@@ -1,5 +1,3 @@
-using GLMakie, LaTeXStrings, Xfoil, DelimitedFiles
-
 """
 Example:
 
@@ -187,5 +185,3 @@ function run_airfoil()
 
     fig
 end
-
-run_airfoil()
