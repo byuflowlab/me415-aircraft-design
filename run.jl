@@ -6,4 +6,4 @@ Pkg.instantiate()
 using AircraftDesign
 
 # launch features (more to come)
-run_airfoil()
+run_naca4()

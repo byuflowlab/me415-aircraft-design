@@ -8,4 +8,6 @@ for file in files
 	include(joinpath(src_dir, file))
 end
 
+export run_naca4
+
 end # module

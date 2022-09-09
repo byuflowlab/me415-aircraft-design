@@ -84,12 +84,8 @@ function read_dat(file)
     return xy[:,1], xy[:,2]
 end
 
-function run_airfoil()
-    # for Xfoil
-    alpha = -8:1:15.0
-
+function run_naca4(; alpha = -8:1:15.0, n_points=100)
     # sliders
-    n_points = 100
     fig = Figure(; resolution = (800,600))
     airfoil_gl = GridLayout(fig[1,1])
     ax = Axis(airfoil_gl[1, 1])
