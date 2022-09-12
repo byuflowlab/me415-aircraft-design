@@ -1,3 +1,7 @@
+include("load.jl")
+
+using GLMakie, LaTeXStrings, Xfoil, DelimitedFiles
+
 """
 Example:
 
@@ -181,3 +185,5 @@ function run_naca4(; alpha = -8:1:15.0, n_points=100)
 
     fig
 end
+
+run_naca4()

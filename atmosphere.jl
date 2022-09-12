@@ -48,13 +48,13 @@ function StandardAtmosphere()
 end
 
 
-    
+
 
 function atmosphere_properties(h, atm::StandardAtmosphere)
 
     T = 0.0
     p = 0.0
-    
+
     if h < -610.0
         @warn "altitude too low"
         h = -610.0
@@ -94,12 +94,12 @@ DrelaAtmosphere() = DrelaAtmosphere(9.80665, 287.053, 1.4, 288.15, 101325.0)
 function atmosphere_properties(h, atm::DrelaAtmosphere)
     (; g, R, Tsl, psl) = atm
     hkm = h/1e3
-    
+
     T = Tsl - 71.5 + 2.0*log(1 + exp(35.75 - 3.25*hkm) + exp(-3.0 + 0.0003*hkm^3))
     p = psl*exp(-0.118*hkm - 0.0015*hkm^2/(1 - 0.018*hkm + 0.0011*hkm^2))
-    
+
     rho = p/(R*T)
-    
+
     return p, rho, T
 end
 
