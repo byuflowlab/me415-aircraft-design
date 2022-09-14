@@ -1,4 +1,4 @@
-name = "AircraftDesign"
+name = "me415-aircraft-design"
 uuid = "5b7c0bff-d2a0-432d-bde9-0dfa7d33d1f1"
 authors = ["Andrew Ning <aning@byu.edu>", "Ryan Anderson <rymanderson@gmail.com>"]
 version = "0.1.0"
