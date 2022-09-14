@@ -96,6 +96,7 @@ end
 
     axes_contour = Axis(axes[1, 1:2])#, xlabel=L"x", ylabel=L"y")
     xlims!(axes_contour, -0.1, 1.1)
+    ylims!(axes_contour, -0.2, 0.2)
     axes_contour.xzoomlock = true
     axes_contour.xrectzoom = false
     # hidexdecorations!(axes_contour, grid = false)
@@ -109,19 +110,11 @@ end
     axes_analysis = GridLayout(axes[3:4, 1:2])
 
     axes_cl = Axis(axes_analysis[1,1], ylabel="lift coefficient")
-    # axes_cl = Axis(axes_analysis[1,1], ylabel=L"c_l")
     axes_cd = Axis(axes_analysis[2,1], xlabel="angle of attack, degrees", ylabel="drag coefficient")
-    # axes_cd = Axis(axes_analysis[2,1], xlabel=L"\alpha[^\circ]", ylabel=L"c_d")
     axes_cm = Axis(axes_analysis[1,2], ylabel="moment coefficient")
-    # axes_cm = Axis(axes_analysis[1,2], ylabel=L"c_m")
-    linkyaxes!(axes_cl, axes_cm)
     axes_clcd = Axis(axes_analysis[2,2], xlabel="angle of attack, degrees", ylabel="lift to drag ratio")
-    # axes_clcd = Axis(axes_analysis[2,2], xlabel=L"\alpha[^\circ]", ylabel=L"c_l/c_d")
     linkxaxes!(axes_cl, axes_cd)
     linkxaxes!(axes_cm, axes_clcd)
-    # hidexdecorations!(axes_cm, grid = false)
-    # hidexdecorations!(axes_cl, grid = false)
-    # hideydecorations!(axes_cm, grid = false, label=false)
     colgap!(axes_analysis, 15)
     rowgap!(axes_analysis, 15)
 
@@ -330,7 +323,7 @@ end
     ##### plot current airfoil
     #####
     lines!(axes_contour, current_x, current_y, label="current")
-    autolimits!(axes_contour)
+    # autolimits!(axes_contour)
     # axes_contour.autolimitaspect = 1
     lines!(axes_pressure, current_cp_x, current_cp, label="current")
     autolimits!(axes_pressure)
@@ -345,6 +338,26 @@ end
     contour_legend = Legend(axes[1,3], axes_contour, tellheight=false)
     pressure_legend = Legend(axes[2,3], axes_pressure, tellheight=false)
     analyze_legend = Legend(axes[3:4,3], axes_cl, tellheight=false)
+
+    on(current_cp) do _
+        autolimits!(axes_pressure)
+    end
+
+    on(current_cl) do _
+        autolimits!(axes_cl)
+    end
+
+    on(current_cd) do _
+        autolimits!(axes_cd)
+    end
+
+    on(current_cm) do _
+        autolimits!(axes_cm)
+    end
+
+    on(current_clcd) do _
+        autolimits!(axes_clcd)
+    end
 
     on(af_keep.clicks) do _
         new_label = af_legend.stored_string.val
