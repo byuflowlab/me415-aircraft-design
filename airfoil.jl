@@ -1,4 +1,5 @@
-# include("load.jl")
+import Pkg
+Pkg.activate(".")
 
 using GLMakie, LaTeXStrings, Xfoil, DelimitedFiles
 
