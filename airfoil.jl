@@ -363,7 +363,6 @@ end
         new_label = af_legend.stored_string.val
         if isnothing(new_label); new_label = ""; end
         new_line = lines!(axes_contour, current_x.val, current_y.val, label=new_label)
-        autolimits!(axes_contour)
         new_legend_entry = LegendEntry(new_label, new_line, contour_legend)
         push!(contour_legend.entrygroups[][1][2], new_legend_entry)
         contour_legend.entrygroups[] = contour_legend.entrygroups.val
