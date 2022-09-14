@@ -1,4 +1,3 @@
-# AircraftDesign.jl
 Simple aircraft analysis and design tools for ME 415. Focused on eVTOL this year.
 
 ## Getting Started
