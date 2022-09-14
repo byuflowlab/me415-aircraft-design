@@ -25,6 +25,5 @@ docs/site/
 
 
 .vscode
+.DS_store
 
-# airfoils directory
-airfoils/

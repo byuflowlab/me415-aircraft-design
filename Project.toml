@@ -1,15 +1,8 @@
-name = "AircraftDesign"
-uuid = "5b7c0bff-d2a0-432d-bde9-0dfa7d33d1f1"
-authors = ["Andrew Ning <aning@byu.edu>", "Ryan Anderson <rymanderson@gmail.com>"]
-version = "0.1.0"
-
 [deps]
 CCBlade = "e1828068-15df-11e9-03e4-ef195ea46fa4"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 FLOWMath = "6cb5d3fb-0fe8-4cc2-bd89-9fe0b19a99d3"
-GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 GXBeam = "974624c9-1acb-4ad6-a627-8ac40fc27a3e"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 VortexLattice = "7a09bdf8-3785-11e9-0bdd-57d0ec69af3f"
 Xfoil = "19641d66-a62d-11e8-2441-8f57a969a9c4"
