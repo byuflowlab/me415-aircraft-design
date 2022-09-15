@@ -91,18 +91,28 @@ end
 
 
 # x, y = naca4(naca, 100)
-function createplots(files, alpha, Re)
+function createplots(airfoils, alpha, Re, M)
     close("all")
     names = []
 
-    for file in files
+    for af in airfoils
 
-        x, y = read_dat(joinpath("airfoils", file))
+        if startswith(af, "naca") && !endswith(af, ".dat")
+            naca = af[5:end]
+            if length(naca) != 4
+                error("naca string formated improperly should be nacaXXXX where X are digits")
+            end
+            x, y = naca4(naca, 100)
+            name = af
+        else
 
-        name = file[1:end-4]
+            x, y = read_dat(joinpath("airfoils", af))
+            name = af[1:end-4]
+        end
+        
         names = [names; name]
 
-        cls, cds, _, cms, conv = Xfoil.alpha_sweep(x, y, alpha, Re, iter=20)
+        cls, cds, _, cms, conv = Xfoil.alpha_sweep(x, y, alpha, Re, mach=M, iter=10)
 
         figure(1)
         plot(alpha[conv], cls[conv])
@@ -112,7 +122,7 @@ function createplots(files, alpha, Re)
 
         figure(2)
         plot(alpha[conv], cms[conv])
-        ylim([-.5, 1.0])
+        ylim([-.2, 0.2])
         xlabel(L"\alpha\ (deg)")
         ylabel(L"c_m")
 
@@ -124,9 +134,15 @@ function createplots(files, alpha, Re)
 
         figure(4)
         plot(alpha[conv], cls[conv]./cds[conv])
-        ylim([0, 100.0])
+        # ylim([0, 100.0])
         xlabel(L"\alpha\ (deg)")
         ylabel(L"c_l / c_d")
+
+        figure(5)
+        plot(cds[conv], cls[conv])
+        xlabel(L"c_d")
+        ylabel(L"c_l")
+        xlim([0, 0.025])
 
         figure()
         plot(x, y)
@@ -134,7 +150,7 @@ function createplots(files, alpha, Re)
         title(name)
     end
 
-    for i = 1:4
+    for i = 1:5
         figure(i)
         legend(names)
     end
