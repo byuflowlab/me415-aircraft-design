@@ -6,3 +6,5 @@ Our analysis codes use the [Julia](https://julialang.org) as the programming lan
 - [Install VS Code](https://code.visualstudio.com/download) for your platform (a text editor). 
 - Install the [Julia extension for VS Code](https://marketplace.visualstudio.com/items?itemName=julialang.language-julia) (see the Install button).
 - Download this repository: click green button labeled Code above then click Download Zip (alternatively if you know git you can clone).  We will be updating the repository with each assignment so you'll need to redownload each time.
+- Open up the setup.jl file in VSCode and run it (you can click the little play icon or setup a keyboard shortcut).  You only need to run this script once, it will download and compile some of the packages we will use throughout the semester.  You might have to run it again later in the semester if new dependencies come up, but we'll let you know.
+- Now open up airfoil.jl (for the first assignment) in VSCode and run it.
