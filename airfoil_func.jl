@@ -112,7 +112,7 @@ function createplots(airfoils, alpha, Re, M)
         
         names = [names; name]
 
-        cls, cds, _, cms, conv = Xfoil.alpha_sweep(x, y, alpha, Re, mach=M, iter=10)
+        cls, cds, _, cms, conv = Xfoil.alpha_sweep(x, y, alpha, Re, mach=M, xtrip=(0.05, 0.05), iter=10)
 
         figure(1)
         plot(alpha[conv], cls[conv])

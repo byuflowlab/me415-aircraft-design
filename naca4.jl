@@ -1,4 +1,4 @@
-include("load.jl")
+# include("load.jl")
 
 using GLMakie, LaTeXStrings, Xfoil, DelimitedFiles
 
