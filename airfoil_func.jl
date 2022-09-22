@@ -87,7 +87,9 @@ function read_dat(file)
     return xy[:,1], xy[:,2]
 end
 
+airfoil_xy(file) = read_dat(file)
 
+airfoil_xy(naca,n) = naca4(naca,n)
 
 
 # x, y = naca4(naca, 100)
@@ -109,7 +111,7 @@ function createplots(airfoils, alpha, Re, M)
             x, y = read_dat(joinpath("airfoils", af))
             name = af[1:end-4]
         end
-        
+
         names = [names; name]
 
         cls, cds, _, cms, conv = Xfoil.alpha_sweep(x, y, alpha, Re, mach=M, xtrip=(0.05, 0.05), iter=10)
