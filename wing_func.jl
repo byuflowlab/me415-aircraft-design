@@ -141,7 +141,7 @@ function run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M
         axis("equal")
     end
 
-    return CL, CD0, CD1, CD2 
+    return CL, CD0, CD1, CD2, Sref
 
 end
 

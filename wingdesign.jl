@@ -26,7 +26,9 @@ M = 0.0  # Mach number
 
 # --------------------------------------------
 
-CL, CD0, CD1, CD2 = run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M)
+CL, CD0, CD1, CD2, Sref = run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M)
+println("CL = ", CL)
 println("CD0 = ", CD0)
 println("CD1 = ", CD1)
 println("CD2 = ", CD2)
+println("Sref = ", Sref)
