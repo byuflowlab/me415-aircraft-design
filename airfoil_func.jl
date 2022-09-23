@@ -46,8 +46,10 @@ function read_dat(file)
     if isnothing(idot) || parse(Float64, strip(lines[2][1:idot])) <= 1.0 # selig format
         xy, head = readdlm(file, header=true)
     else # Lednicer format
-        n_points = parse(Int64,strip(lines[2][1:idot-1]))
-        xy = zeros(n_points*2,2)
+        n_points_u = parse(Int64,strip(lines[2][1:idot-1]))
+        idot2 = idot + findfirst(".", lines[2][idot+1:end])[1]
+        n_points_l = parse(Int64,strip(lines[2][idot+2:idot2-1]))
+        xy = zeros(n_points_u + n_points_l, 2)
 
         # parse values
         counter = 1
@@ -65,10 +67,10 @@ function read_dat(file)
                 xy[counter,1] = x
                 xy[counter,2] = y
             else
-                xy[n_points + counter,1] = x
-                xy[n_points + counter,2] = y
+                xy[n_points_u + counter,1] = x
+                xy[n_points_u + counter,2] = y
             end
-            if counter == n_points
+            if counter == n_points_u
                 counter = 1
                 upper = false
             else
@@ -77,9 +79,9 @@ function read_dat(file)
         end
 
         # change to ccw order
-        reverse!(view(xy,1:n_points,:), dims=1)
-        if prod(xy[n_points,:] .== xy[n_points+1,:]) # repeated leading edge point
-            xy = vcat(xy[1:n_points-1,:], xy[n_points+1:end,:])
+        reverse!(view(xy,1:n_points_u,:), dims=1)
+        if prod(xy[n_points_u,:] .== xy[n_points_u+1,:]) # repeated leading edge point
+            xy = vcat(xy[1:n_points_u-1,:], xy[n_points_u+1:end,:])
         end
     end
     @assert isapprox(xy[1,1], 1.0; atol=1e-2) "First point should be at x=1"
