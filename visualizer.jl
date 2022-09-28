@@ -36,13 +36,31 @@ wings = [
 #####
 ##### add rotors
 #####
-
+# rotors = [
+#     [
+#         n_blades = 2,
+#         origin = zeros(3),
+#         # orientation,
+#         plot_airfoils = false,
+#         Rtip = 25.0,           # Radius at blade tip
+#         Rhub = 1.0,            # Radius of the hub
+#         airfoil_files = ["Cyl1.txt", "Cyl1.txt", "S815.txt", "S809.txt", "S826.txt"],
+#         r_over_R = [1/25, 0.2, 0.22, 0.5, 1.0],
+#         c_over_R = [1.0, 0.6, 1.75, 3.0, 0.85] / Rtip,
+#         thetas = [50.0, 30.0, 20.0, 13.0, 7.0] * pi/180,
+#         z_over_R = [0.0, 0.0, 0.0, 0.01, 0.05],
+#         sweep_over_c = [0.25, 0.25, 0.25, 0.25, 0.25],
+#     ]
+# ]
 
 # ----------- do not change below this line --------------
 
-vtk_files = String[]
-for wing in wings
-    global vtk_files = vcat(vtk_files, construct_wing(wing...))
-end
+# vtk_files = String[]
+# for wing in wings
+#     global vtk_files = vcat(vtk_files, construct_wing(wing...))
+# end
 
-launch_paraview(vtk_files)
+# launch_paraview(vtk_files)
+
+rotor_files = blade_example("rotor"; n_blades=3)
+launch_paraview(rotor_files)
