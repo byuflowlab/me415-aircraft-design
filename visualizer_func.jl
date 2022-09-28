@@ -1,5 +1,5 @@
-import Pkg
 import GeometricTools as gt
+import LinearAlgebra as LA
 include("airfoil_func.jl")
 
 function transform!(V::Array{T1,1}, M::Array{T2,2}, T::Array{T3,1}
@@ -131,10 +131,10 @@ function construct_wing(origin, file_name, b, sweep, dihedral, y_pos, chords, ai
     return vtk_files
 end
 
-function construct_rotor(file_name;
-        n_blades = 2,
-        origin = zeros(3),
-        orientation = [1.0, 0,0],
+function construct_rotor(file_name,
+        n_blades,
+        origin,
+        orientation,
         plot_airfoils = false,
         Rtip = 25.0,           # Radius at blade tip
         Rhub = 1.0,            # Radius of the hub
@@ -235,18 +235,21 @@ function construct_rotor(file_name;
     # rotate blades into rotor
     rotor_files = String[]
     d_phi = 2 * pi / n_blades
-    Rt = [
-
-    ]
+    seed_vec = rand(3)
+    normal_vec_1 = LA.cross(seed_vec, orientation)
+    normal_vec_1 /= LA.norm(normal_vec_1)
+    normal_vec_3 = LA.cross(normal_vec_1, orientation)
+    normal_vec_3 /= LA.norm(normal_vec_3)
+    Rt = hcat(normal_vec_1, orientation, normal_vec_3)
+    R = transpose(Rt)
     for i_blade in 1:n_blades
         # Generates the vtk file
-        gt.generateVTK(file_name * "_$i_blade", points; cells=vtk_cells, point_data=data)
         if i_blade < n_blades
             transform!.(points, Ref([cos(d_phi) 0 -sin(d_phi); 0 1 0; sin(d_phi) 0 cos(d_phi)]), Ref(-origin))
         end
-        push!(rotor_files, file_name * "_$i_blade" * ".vtk; ")
+        gt.generateVTK(file_name * "_$i_blade", points; cells=vtk_cells, point_data=data)
+        push!(rotor_files, file_name * "_$i_blade.vtk;")
     end
-
     return rotor_files
 end
 
