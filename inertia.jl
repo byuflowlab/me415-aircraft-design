@@ -39,7 +39,7 @@ fuselages = [
         2.0, # effective diameter
         8.0, # length
         400.0, # mass
-        [2.7,0.0,1.0]# cg
+        [0.132,0.0,-0.004]# cg
     ], # add another below if you need one
 ]
 

@@ -104,25 +104,25 @@ function update_inertia_cg_mass!(I, cg, mass, new_I, new_cg, new_mass)
     xs[1,:] .= cg
     xs[2,:] .= new_cg
     ms = [mass, new_mass]
-    cg = cg_points(xs, ms)
-    I += parallel_axis(new_I, new_cg, cg, new_mass)
+    cg .= cg_points(xs, ms)
+    I .+= parallel_axis(new_I, new_cg, cg, new_mass)
     mass += new_mass
-    return nothing
+    return mass
 end
 
 function compute_inertia_cg_mass(xs_points, ms_points, fuselages, wings)
-    cg = cg_points(xs_points, ms_points)
-    I = inertia_points(xs, ms, cg)
-    mass = sum(ms_points)
+    cg = length(ms_points) > 0 ? cg_points(xs_points, ms_points) : zeros(3)
+    I = length(ms_points) > 0 ? inertia_points(xs, ms, cg) : zeros(3,3)
+    mass = length(ms_points) > 0 ? sum(ms_points) : 0.0
     for fuselage in fuselages
         fuselage_diameter, fuselage_length, fuselage_mass, fuselage_cg = fuselage
         I_fuselage = fuselage_inertia(fuselage_diameter, fuselage_length, fuselage_mass)
-        update_inertia_cg_mass!(I, cg, mass, I_fuselage, fuselage_cg, fuselage_mass)
+        mass = update_inertia_cg_mass!(I, cg, mass, I_fuselage, fuselage_cg, fuselage_mass)
     end
     for wing in wings
         wing_span, wing_mass, wing_orientation, wing_cg = wing
         I_wing = wing_inertia(wing_span, wing_mass, wing_orientation)
-        update_inertia_cg_mass!(I, cg, mass, I_wing, wing_cg, wing_mass)
+        mass = update_inertia_cg_mass!(I, cg, mass, I_wing, wing_cg, wing_mass)
     end
     return I, cg, mass
 end
