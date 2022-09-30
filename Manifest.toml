@@ -2,7 +2,7 @@
 
 julia_version = "1.8.0"
 manifest_format = "2.0"
-project_hash = "9e68c9521bd5c464e4a6788f98700a25a507ce97"
+project_hash = "a2fb644882f675ab0fd7ad269e5357e9b8a2eb44"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra"]
@@ -501,6 +501,12 @@ version = "1.1.1"
 [[deps.SharedArrays]]
 deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+
+[[deps.SixDOF]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "a95c6cc90713a94ea4bb2781f5cb292237a905a1"
+uuid = "304da4c3-06e5-42c8-b67d-e82ababee5fb"
+version = "0.1.0"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
