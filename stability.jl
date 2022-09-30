@@ -10,7 +10,6 @@ pygui(true); close("all")
 include("airfoil_func.jl")
 include("atmosphere.jl")
 include("basicdrag_funcs.jl")
-include("inertia_func.jl")
 
 
 function run()
@@ -643,6 +642,141 @@ function viscousdrag(system, grids, airfoils, Sref, alpha, Re, M, fuse)
     CDv *= interference_multiplier 
 
     return CDv
+end
+
+
+"""
+    cg_points(xs, ms)
+
+Calculates the center of gravity of a collection of point masses.
+
+Inputs:
+
+- `xs::Matrix{Float64}`: an n by 3 array containing the cartesian coordinates of n point masses
+- `ms::Vector{Float64}`: a vector of length n containing the mass of each point mass
+
+Outputs:
+
+- `cg::Vector{Float64}`: a vector of length 3 containing the Cartesian coordinates of the center of gravity of the collection of point masses
+"""
+function cg_points(xs, ms)
+    sum_mr = [sum(xs[:,i] .* ms) for i in 1:3]
+    sum_m = sum(ms)
+    cg = sum_mr / sum_m
+end
+
+
+"""
+    inertia_points(xs,ms,cg)
+
+Calculates the x, y, and z components of the mass moment of inertia about point cg.
+
+Inputs:
+
+- `xs::Matrix{Float64}`: an n by 3 array containing the cartesian coordinates of n point masses
+- `ms::Vector{Float64}`: a vector of length n containing the mass of each point mass
+- `cg::Vector{Float64}`: point about which the moment of inertia is calculated (typically the center of gravity)
+
+"""
+function inertia_points(xs, ms, cg)
+    I = Array{Float64,2}(undef,3,3)
+    xs_translated = similar(xs)
+    for i in 1:3; xs_translated[:,i] = xs[:,i] .- cg[i]; end
+    I[1,1] = sum((xs_translated[:,2] .^2 .+ xs_translated[:,3] .^2) .* ms) # Ixx
+    I[2,2] = sum((xs_translated[:,1] .^2 .+ xs_translated[:,3] .^2) .* ms) # Iyy
+    I[3,3] = sum((xs_translated[:,1] .^2 .+ xs_translated[:,1] .^2) .* ms) # Izz
+    I[1,2] = I[2,1] = -sum(xs_translated[:,1] .* xs_translated[:,2] .* ms) # Ixy
+    I[2,3] = I[3,2] = -sum(xs_translated[:,2] .* xs_translated[:,3] .* ms) # Iyz
+    I[1,3] = I[3,1] = -sum(xs_translated[:,1] .* xs_translated[:,3] .* ms) # Ixz
+    return I
+end
+
+"""
+    fuselage_inertia(effective_diameter, length, mass)
+
+Converts a fuselage to a point mass and estimates its inertia tensor about its center, treating it like a hollow cylinder. As fuselage shapes are highly variable, the user must guess its cg location.
+Equations taken from https://amesweb.info/inertia/hollow-cylinder-moment-of-inertia.aspx.
+"""
+function fuselage_inertia(effective_diameter, length, mass)
+    Ixx = mass * effective_diameter^2 / 4
+    Iyy = mass / 12 * (3*effective_diameter^2/2 + length^2)
+    Izz = Iyy
+    I = [Ixx 0 0;
+         0 Iyy 0;
+         0 0 Izz]
+    return I
+end
+
+function parallel_axis(Icg, cg, new_center, total_mass)
+    dx = new_center - cg
+    Ir = zeros(3,3)
+    Ir[1,1] = Icg[1,1] + total_mass * (dx[2]^2 + dx[3]^2)
+    Ir[2,2] = Icg[2,2] + total_mass * (dx[1]^2 + dx[3]^2)
+    Ir[3,3] = Icg[3,3] + total_mass * (dx[1]^2 + dx[2]^2)
+    Ir[1,2] = Ir[2,1] = Icg[1,2] - total_mass * (dx[1]*dx[2])
+    Ir[2,3] = Ir[3,2] = Icg[2,3] - total_mass * (dx[2]*dx[3])
+    Ir[1,3] = Ir[3,1] = Icg[1,3] - total_mass * (dx[1]*dx[3])
+    return Ir
+end
+
+"""
+    wing_inertia(span, mass, orientation)
+
+Converts a wing to a point mass and estimates its inertia tensor about its center, treating it like a uniform rod. Assumes inertia acts like a single spar. The user must decide the location of the spar (and therefore the cg).
+Equations taken from https://amesweb.info/inertia/hollow-cylinder-moment-of-inertia.aspx.
+"""
+function wing_inertia(span, mass, orientation)
+    @assert orientation[1] == 0.0 "first element of orientation must be 0"
+    I = zeros(3,3)
+    I[1,1] = I[3,3] = mass * span^2 / 12
+    e1 = [-1.0,0,0]
+    e2 = orientation / norm(orientation)
+    e3 = cross(e1, e2)
+    Rt = hcat(e1, e2, e3) # expresses vector of the operator frame in terms of the global frame
+    R = transpose(Rt)
+    I = Rt * I * R # I x = b => Rt I x = Rt x => Rt I R x_global = b_global
+    return I
+end
+
+function wing_inertia(span, mass, orientation, mirror)
+    if mirror
+        I1 = wing_inertia(span/2.0, mass/2.0, orientation)
+        I1root = parallel_axis(I1, span/4.0*orientation, 0.0*orientation, mass/2.0)
+        I2 = wing_inertia(span/2.0, mass/2.0, [0.0, -orientation[2], orientation[3]])
+        I2root = parallel_axis(I2, span/4.0*orientation.*[1, -1, 1], 0.0*orientation, mass/2.0)
+        I = I1root + I2root
+    else
+        I = wing_inertia(span, mass, orientation)
+    end
+    return I
+end
+
+function update_inertia_cg_mass!(I, cg, mass, new_I, new_cg, new_mass)
+    xs = zeros(2,3)
+    xs[1,:] .= cg
+    xs[2,:] .= new_cg
+    ms = [mass, new_mass]
+    cg .= cg_points(xs, ms)
+    I .+= parallel_axis(new_I, new_cg, cg, new_mass)
+    mass += new_mass
+    return mass
+end
+
+function compute_inertia_cg_mass(xs_points, ms_points, fuselages, wings)
+    cg = length(ms_points) > 0 ? cg_points(xs_points, ms_points) : zeros(3)
+    I = length(ms_points) > 0 ? inertia_points(xs_points, ms_points, cg) : zeros(3,3)
+    mass = length(ms_points) > 0 ? sum(ms_points) : 0.0
+    for fuselage in fuselages
+        fuselage_diameter, fuselage_length, fuselage_mass, fuselage_cg = fuselage
+        I_fuselage = fuselage_inertia(fuselage_diameter, fuselage_length, fuselage_mass)
+        mass = update_inertia_cg_mass!(I, cg, mass, I_fuselage, fuselage_cg, fuselage_mass)
+    end
+    for wing in wings
+        wing_span, wing_mass, wing_orientation, wing_mirror, wing_cg = wing
+        I_wing = wing_inertia(wing_span, wing_mass, wing_orientation, wing_mirror)
+        mass = update_inertia_cg_mass!(I, cg, mass, I_wing, wing_cg, wing_mass)
+    end
+    return I, cg, mass
 end
 
 run()
