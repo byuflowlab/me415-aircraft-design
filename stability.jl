@@ -150,7 +150,7 @@ function plotfuselage(fuse, ax)
     front_circle_x = ones(length(thetas)) .* (fuselage_cg[1])# - fuselage_length/2)
     front_circle_y = fuselage_cg[2] .+ fuselage_diameter/2 * cos.(thetas)
     front_circle_z = fuselage_cg[3] .+ fuselage_diameter/2 * sin.(thetas)
-    aft_circle_x = ones(length(thetas)) .* (fuselage_cg[1] + fuselage_length/2)
+    aft_circle_x = ones(length(thetas)) .* (fuselage_cg[1] + fuselage_length)#/2)
     aft_circle_y = fuselage_cg[2] .+ fuselage_diameter/2 * cos.(thetas)
     aft_circle_z = fuselage_cg[3] .+ fuselage_diameter/2 * sin.(thetas)
     line_1_xs = [front_circle_x[1], aft_circle_x[1]]
