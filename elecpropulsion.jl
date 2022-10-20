@@ -49,11 +49,17 @@ T = 2.2
 pout, mout, bout = electricpropulsion(motor, prop, battery, T, Vinf, SOC)
 
 
-Vvec = range(0.5*Vinf, 1.5*Vinf, 40)
+Vvec = range(0.5*Vinf, 1.5*Vinf, 50)
 out = electricpropulsion.(Ref(motor), Ref(prop), Ref(battery), T, Vvec, SOC)
 poutv = getindex.(out, 1)
 moutv = getindex.(out, 2)
 boutv = getindex.(out, 3)
+
+Omegavec = range(0.5*pout.Omega, 1.5*pout.Omega, 50)
+out = combined.(Ref(motor), Ref(prop), Ref(battery), Omegavec, Vinf, SOC)
+pO = getindex.(out, 1)
+mO = getindex.(out, 2)
+bO = getindex.(out, 3)
 
 # Dvec = drag.(Ref(acdrag), rho, Vvec)
 
@@ -98,6 +104,18 @@ plot(Vinf, bout.eta, "ko")
 plot(Vinf, mout.eta, "ko")
 plot(Vinf, pout.eta, "ko")
 xlabel("flight speed")
+ylabel("efficiency")
+legend(["battery", "motor", "prop"])
+
+
+figure()
+plot(Omegavec, bO.eta)
+plot(Omegavec, mO.eta)
+plot(Omegavec, pO.eta)
+plot(pout.Omega, bout.eta, "ko")
+plot(pout.Omega, mout.eta, "ko")
+plot(pout.Omega, pout.eta, "ko")
+xlabel("Omega: rotation speed")
 ylabel("efficiency")
 legend(["battery", "motor", "prop"])
 
