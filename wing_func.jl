@@ -17,21 +17,31 @@ function parameterize_af_data(af, Re, M)
     end
 
     # run xfoil across relatively narrow region - linear portion of lift.
-    alpha_start = -2  # starting angle of attack in degrees
-    alpha_end = 8  # ending angle of attack
+    alpha_start = -2.0  # starting angle of attack in degrees
+    alpha_end = 8.0  # ending angle of attack
     alpha = range(alpha_start, alpha_end, 30)
     cl, cd, _, cm, conv = Xfoil.alpha_sweep(x, y, alpha, Re, mach=M, xtrip=(0.05, 0.05), iter=10)
 
-    # least squares
+    # least squares for drag polar
     A = [ones(length(cl)) cl cl.^2]
     coeff = A\cd
 
-    return coeff
+    # least squares for zero-lift aoa
+    A = [ones(length(alpha)) alpha*pi/180]
+    acoeff = A\cl
+
+    m = acoeff[2]
+    alpha0 = -acoeff[1]/m
+    
+    return coeff, alpha0
 end
 
 
 
 function run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M, plots=true)
+
+    # airfoil data
+    afcoeff, alpha0 = parameterize_af_data(airfoil, Re, M)
 
     # define geometry
     xle = [0.0, xt] # leading edge x-position
@@ -41,6 +51,8 @@ function run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M
     theta = [θr, θt]*pi/180 # twist (in radians)
     phi = [0.0, 0.0] # section rotation about the x-axis
     fc = fill((xc) -> 0, 2) # camberline function for each section (y/c = f(x/c))
+
+    theta .-= alpha0  # twist is relative to zero lift angle of attack
 
     # define discretization
     ns = 12 # number of spanwise panels
@@ -108,7 +120,7 @@ function run_vlm_once(xt, yt, zt, cr, ct, θr, θt, airfoil, clmax, alpha, Re, M
     eta = y_mid/bref
 
     # viscous drag
-    afcoeff = parameterize_af_data(airfoil, Re, M)
+    
     # CDv = viscous_drag(cl, afcoeff, chord_mid, y_lines, Sref)
     ds = diff(y_lines)
     CD0 = afcoeff[1]

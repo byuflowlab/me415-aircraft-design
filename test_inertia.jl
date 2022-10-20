@@ -2,7 +2,7 @@ include("inertia_func.jl")
 
 ##### Testing
 fuselage_xflr5 = [
-    0.01, # effective diameter
+    0.03, # effective diameter
     1.0, # length
     1.0, # mass
     [0.132,0.0,-0.004]# cg
@@ -15,7 +15,7 @@ I_fuselage_xflr5 = [
 ]
 
 wing_xflr5 = [
-    2.0,
+    1.5,
     1.0,
     [0.0,1.0,0.0],
     [0.093,0,0]

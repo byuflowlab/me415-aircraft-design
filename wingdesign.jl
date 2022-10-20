@@ -20,7 +20,7 @@ airfoil = "737root.dat"
 clmax = 1.2  # while this could be computed internally, it is more robust to just find this from the airfoil.jl analysis.
 
 # flow parameters
-alpha = 4.0 # angle of attack
+alpha = 3.0 # angle of attack
 Re = 1e6  # Reynolds number
 M = 0.0  # Mach number
 
