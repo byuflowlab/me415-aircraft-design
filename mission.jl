@@ -40,7 +40,7 @@ CDp = 0.01  # total parasitic drag coefficient
 b = 1.0  # wing span
 AR = 10.0  
 Sref = b^2/AR  # reference area
-m = 1.5  # total aircraft mass  (kg)
+m = 0.8  # total aircraft mass EXCEPT battery (kg)
 
 # nominal cruise speed
 Vinf = 10.0  # m/s
@@ -49,6 +49,8 @@ Vinf = 10.0  # m/s
 dist = 2e3  # meters
 
 # ------ don't need to change below this line ------
+
+m += battery.mass
 
 g = 9.81
 W = m * g
