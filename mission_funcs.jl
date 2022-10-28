@@ -32,7 +32,7 @@ function pack(cell, ns, np)  # combine cells to overall pack performance
     v(x) = cell.OCV(x) * ns
     R(x) = cell.R(x) * ns / np
     C = cell.C * np
-    mass = cell.mass * ns * np * 1.42  # 1.42 factor accounts for mass of BMS, wiring, housing
+    mass = cell.mass * ns * np * 1.15  # extra markup to account for mass of BMS, wiring, housing, etc.
     return Cell(v, R, C, mass)
 end
 
