@@ -42,6 +42,9 @@ AR = 10.0
 Sref = b^2/AR  # reference area
 m = 0.8  # total aircraft mass EXCEPT battery (kg)
 
+# climb speed
+Vclimb = 1.0 # m/s
+
 # nominal cruise speed
 Vinf = 10.0  # m/s
 
