@@ -24,7 +24,7 @@ Kv = 600 * pi/30 # converted from RPM/volt to rad/s per volt
 R = 1.2  # resistance
 I0 = 0.2  # no load current
 nmotor = 2  # number of motors / propellers
-motor = MotorProp(Kv, R, I0, nmotor)
+motor = MotorProp(Kv, I0, R, nmotor)
 
 
 # battery cell properties (don't change these)
