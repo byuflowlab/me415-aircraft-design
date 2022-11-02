@@ -1,5 +1,7 @@
 include("mission_funcs.jl")
 
+liftpluscruise = false
+
 # ---- propellers ------
 CT0 = 0.10498189377597929
 CT1 = -0.04284850670965053
@@ -11,6 +13,28 @@ D = 0.1
 rho = 1.1  # just use an average value.  we'll ignore the comparatively small changes in our altitude
 num = 8  # number of propellers
 prop = PropAero(CT0, CT1, CT2, CQ0, CQ1, CQ2, D, rho, num)
+
+cruiseprop = prop
+if liftpluscruise
+    # if a lift plus cruise Configuration
+    # define the lifting (hover) rotor here
+
+    # ---- propellers ------
+    CT0 = 0.10498189377597929
+    CT1 = -0.04284850670965053
+    CT2 = -0.07282470378725926
+    CQ0 = 0.0047414730884522225
+    CQ1 = 0.012101884693533555
+    CQ2 = -0.01730034002642814
+    D = 0.1
+    rho = 1.1  # just use an average value.  we'll ignore the comparatively small changes in our altitude
+    num = 8  # number of propellers
+    liftprop = PropAero(CT0, CT1, CT2, CQ0, CQ1, CQ2, D, rho, num)
+    
+else
+
+    liftprop = prop
+end
 
 
 # ------ motors --------
@@ -56,7 +80,8 @@ g = 9.81
 W = m * g
 ac = DragModel(W, b, Sref, CDp, einv)
 
-data = mission(prop, motor, battery, ac, W, Vinf, dist)
+data = mission(liftprop, cruiseprop, motor, battery, ac, W, Vinf, dist)
+
 
 time = cumsum(data.t) / 60
 
@@ -105,11 +130,11 @@ Vvec = range(0.7*Vinf, 1.3*Vinf, 20)
 r = zeros(20)
 
 for i = 1:20
-    r[i] = findrange(prop, motor, battery, ac, W, Vvec[i])
+    r[i] = findrange(liftprop, cruiseprop, motor, battery, ac, W, Vvec[i])
 end
 
-dist = findrange(prop, motor, battery, ac, W, Vinf)
-data = mission(prop, motor, battery, ac, W, Vinf, dist)
+dist = findrange(liftprop, cruiseprop, motor, battery, ac, W, Vinf)
+data = mission(liftprop, cruiseprop, motor, battery, ac, W, Vinf, dist)
 
 figure()
 plot(Vvec*2.23694, r*6.213711985e-4)

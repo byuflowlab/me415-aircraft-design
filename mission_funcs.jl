@@ -330,7 +330,7 @@ function hoverdescend(prop, motor, battery, W, data, k)
     return segment(prop, motor, battery, T, Va, t, alt_finish, data, k)
 end
 
-function mission(prop, motor, battery, ac, W, Vinf, dist)
+function mission(lprop, cprop, motor, battery, ac, W, Vinf, dist)
 
     # initialize
     nseg = 9
@@ -358,33 +358,33 @@ function mission(prop, motor, battery, ac, W, Vinf, dist)
 
     # main mission
     climb_alt = 1500.0*0.3048
-    hoverclimb(prop, motor, battery, W, data, 2)
-    liftclimb(prop, motor, battery, ac, Vinf, climb_alt, data, 3)
+    hoverclimb(lprop, motor, battery, W, data, 2)
+    liftclimb(cprop, motor, battery, ac, Vinf, climb_alt, data, 3)
     for i = 1:nmc
-        cruise(prop, motor, battery, ac, Vinf, climb_alt, dist/nmc, data, 3+i)
+        cruise(cprop, motor, battery, ac, Vinf, climb_alt, dist/nmc, data, 3+i)
     end
-    liftdescend(prop, motor, battery, ac, Vinf, climb_alt, data, nmc+4)
-    hoverdescend(prop, motor, battery, W, data, nmc+5)
+    liftdescend(cprop, motor, battery, ac, Vinf, climb_alt, data, nmc+4)
+    hoverdescend(lprop, motor, battery, W, data, nmc+5)
     
     # reserve mission
     climb_alt = 500.0*0.3048
     reserve_dist = 6.0 * 1609.34
-    hoverclimb(prop, motor, battery, W, data, nmc+6)
-    liftclimb(prop, motor, battery, ac, Vinf, climb_alt, data, nmc+7)
+    hoverclimb(lprop, motor, battery, W, data, nmc+6)
+    liftclimb(cprop, motor, battery, ac, Vinf, climb_alt, data, nmc+7)
     for i = 1:nrc
-        cruise(prop, motor, battery, ac, Vinf, climb_alt, reserve_dist/nrc, data, nmc+7+i)
+        cruise(cprop, motor, battery, ac, Vinf, climb_alt, reserve_dist/nrc, data, nmc+7+i)
     end
-    liftdescend(prop, motor, battery, ac, Vinf, climb_alt, data, nmc+nrc+8)
-    hoverdescend(prop, motor, battery, W, data, nmc+nrc+9)
+    liftdescend(cprop, motor, battery, ac, Vinf, climb_alt, data, nmc+nrc+8)
+    hoverdescend(lprop, motor, battery, W, data, nmc+nrc+9)
 
     return data
 end
 
 
-function residual(prop, motor, battery, ac, W, Vinf, dist) 
-    data = mission(prop, motor, battery, ac, W, Vinf, dist)
+function residual(lprop, cprop, motor, battery, ac, W, Vinf, dist) 
+    data = mission(lprop, cprop, motor, battery, ac, W, Vinf, dist)
     return data.SOC[end] - 0.2  # find distance you can fly where SOC reaches 0.2
 end
 
-findrange(prop, motor, battery, ac, W, Vinf) = brent(x -> residual(prop, motor, battery, ac, W, Vinf, x), 10e3, 1000e3)[1]
+findrange(lprop, cprop, motor, battery, ac, W, Vinf) = brent(x -> residual(lprop, cprop, motor, battery, ac, W, Vinf, x), 10e3, 1000e3)[1]
 
