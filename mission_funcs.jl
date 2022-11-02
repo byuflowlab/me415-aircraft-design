@@ -304,9 +304,9 @@ function liftdescend(prop, motor, battery, ac, Vinf, climb_alt, data, k)
     zdot = -500 * 0.00508
     Vdescend = 0.9 * Vinf
     D = drag(ac, prop.rho, Vdescend)
-    T = zdot * W / Vclimb + D
+    T = zdot * W / Vdescend + D
     T = max(T, 0.0)
-    Va = Vclimb
+    Va = Vdescend
     alt_finish = 50 * 0.3048
     t = (alt_finish - climb_alt)/zdot
 
