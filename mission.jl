@@ -41,7 +41,7 @@ end
 Kv = 1600 * pi/30 # converted from RPM/volt to rad/s per volt
 R = 1.2  # resistance
 I0 = 0.2  # no load current
-motor = MotorProp(Kv, R, I0)
+motor = MotorProp(Kv, I0, R)
 
 
 # battery cell properties (don't change these)
